@@ -1,0 +1,13 @@
+.submitActionLoading{
+	background: url(images/btns_red.gif) top center no-repeat !important;
+	text-shadow: 1px 1px 0 #b55f10 !important;
+}
+
+.submitActionLoading:hover{
+	background: url(images/btns_red.gif) top center no-repeat !important;
+	text-shadow: 1px 1px 0 #b55f10 !important;
+}
+
+.redBorder{
+	border-color: red !important;
+}
