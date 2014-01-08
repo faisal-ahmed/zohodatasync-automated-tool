@@ -30,8 +30,8 @@ class CsvConversion
 	}
 	
 	public function download_file() {
+		ob_start();
 		if (file_exists( dirname(__FILE__) . '/uploads/convertedFile.csv')) {
-			ob_start();
 			header('Content-Description: File Transfer');
 			header("Content-Type: application/force-download");
 			header("Content-Type: application/octet-stream");
@@ -45,8 +45,9 @@ class CsvConversion
 			ob_clean();
 			flush();
 			readfile( dirname(__FILE__) . '/uploads/convertedFile.csv');
-			ob_end_flush
 		}
+		ob_end_flush();
+		die;
 	}
 	
 	public function convert_excel_to_csv($extention, $filename) {
@@ -76,3 +77,5 @@ class CsvConversion
 		$this->create_array_2_csv_local_file($csvArray);
 	}
 }
+
+?>

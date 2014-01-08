@@ -66,3 +66,5 @@ define("SALES_ORDER_SUBJECT","Website sales");
             ),
         ),
     );*/
+	
+?>
