@@ -92,16 +92,9 @@ function zdsAutomated_options() {
 	
 	extract($_POST);
 	
-	/*if (isset($_REQUEST['get_my_csv']) && $_REQUEST['get_my_csv'] == 'download_now'){
-		$parser = new CsvConversion();
-		$parser->download_file();
-		return;
-	}*/
-	
     if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step1' ) {
-		//uncomment me for live
-		//$parser = new CsvConversion();
-		//$parser->convert_excel_to_csv(substr($uploaded_file_name, (strpos($uploaded_file_name, '.') + 1) ), $uploaded_file_name);
+		$parser = new CsvConversion();
+		$parser->convert_excel_to_csv(substr($uploaded_file_name, (strpos($uploaded_file_name, '.') + 1) ), $uploaded_file_name);
 		if ( isset($action) && $action == 'csv' ) {
 			uploadInstruction();
 		} else if ( isset($action) && $action == 'zoho' ) {
@@ -120,10 +113,7 @@ function zdsAutomated_options() {
 	<div class="block_content">
 		<form id="zds_file_convert_into_CSV" name="zds_file_convert_into_CSV" onsubmit="return validate_form_step_1();" enctype="multipart/form-data" method="post" action="">
 			<input type="hidden" name="zds_automated_hidden" value="step1"/>
-			<!--<input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>
-			TODO: Please uncomment this and comment the following line for live.
-			-->
-			<input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value="my contacts.xlsx"/>
+			<input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>
 			<h3>Step One</h3>
 			<h4>Please upload your file either to upload directly into Zoho or download the CSV format file.</h4>
 			<p>
