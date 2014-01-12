@@ -56,6 +56,38 @@ class ZohoDataSync extends ZohoIntegrator
         return $this->doRequest();
     }
 
+    public function uploadFile($moduleName, $id, $fileUrl)
+    {
+        $this->resetWithDefaults();
+        $this->setZohoModuleName("$moduleName");
+        $this->setZohoApiOperationType('uploadFile');
+        $extraParameter = array(
+            "id" => "$id",
+            "content" => "@$fileUrl"
+        );
+
+        $this->setZohoExtendedUriParameter($extraParameter);
+
+        return $this->doRequest();
+        // Response trim($xml->result->message) == "File has been attached successfully"
+    }
+
+    public function uploadPhoto($moduleName, $id, $fileUrl)
+    {
+        $this->resetWithDefaults();
+        $this->setZohoModuleName("$moduleName");
+        $this->setZohoApiOperationType('uploadPhoto');
+        $extraParameter = array(
+            "id" => "$id",
+            "content" => "@$fileUrl"
+        );
+
+        $this->setZohoExtendedUriParameter($extraParameter);
+
+        return $this->doRequest();
+        // Response trim($xml->result->message) == "Photo uploaded succuessfully"
+    }
+
     public function getRecordsOfZoho($moduleName, $lastModifiedTime = null, $sortColumnString = null, $sortOrderString = 'desc', $fromIndex = null, $toIndex = null)
     {
         $this->resetWithDefaults();
@@ -68,6 +100,24 @@ class ZohoDataSync extends ZohoIntegrator
         if (isset($fromIndex)) $extraParameter['fromIndex'] = $fromIndex;
         if (isset($toIndex)) $extraParameter['toIndex'] = $toIndex;
         if (isset($sortColumnString)) $extraParameter['sortColumnString'] = $sortColumnString;
+
+        $this->setZohoExtendedUriParameter($extraParameter);
+
+        return $this->doRequest();
+    }
+
+    public function getCVRecordsOfZoho($moduleName, $cvName, $lastModifiedTime = null, $fromIndex = null, $toIndex = null)
+    {
+        $this->resetWithDefaults();
+        $this->setZohoModuleName("$moduleName");
+        $this->setZohoApiOperationType('getCVRecords');
+        $extraParameter = array(
+            "cvName" => "$cvName",
+            "selectColumns" => "All",
+        );
+        if (isset($lastModifiedTime)) $extraParameter['lastModifiedTime'] = $lastModifiedTime;
+        if (isset($fromIndex)) $extraParameter['fromIndex'] = $fromIndex;
+        if (isset($toIndex)) $extraParameter['toIndex'] = $toIndex;
 
         $this->setZohoExtendedUriParameter($extraParameter);
 
