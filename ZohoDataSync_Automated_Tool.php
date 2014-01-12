@@ -92,11 +92,11 @@ function zdsAutomated_options() {
 	
 	extract($_POST);
 	
-	if (isset($_REQUEST['get_my_csv']) && $_REQUEST['get_my_csv'] == 'download_now'){
+	/*if (isset($_REQUEST['get_my_csv']) && $_REQUEST['get_my_csv'] == 'download_now'){
 		$parser = new CsvConversion();
 		$parser->download_file();
 		return;
-	}
+	}*/
 	
     if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step1' ) {
 		//uncomment me for live

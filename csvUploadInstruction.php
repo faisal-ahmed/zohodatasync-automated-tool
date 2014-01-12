@@ -3,6 +3,8 @@
 require_once dirname(__FILE__) . '/utils_conversion.php';
 
 function uploadInstruction() {
+    $for_localhost = '/wordpress/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+    $for_server = '/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
 ?>
 <script type="text/javascript">
 	$(function () {
@@ -14,7 +16,8 @@ function uploadInstruction() {
 			iframe.style.visibility = 'hidden';
 			document.body.appendChild(iframe);
 		}
-		iframe.src = '?page=zds-automated-id&get_my_csv=download_now';	
+		iframe.src = "<?php echo $for_localhost ?>";
+		/*iframe.src = "<?php // echo $for_server ?>";*/
 	});
 	function download_csv(){
 		var file_download = $.post( "", {'get_my_csv': 'download_now'}, function( data ) {
@@ -26,7 +29,8 @@ function uploadInstruction() {
 				iframe.style.visibility = 'hidden';
 				document.body.appendChild(iframe);
 			}
-			iframe.src = '?page=zds-automated-id&get_my_csv=download_now';
+			iframe.src = "<?php echo $for_localhost ?>";
+			/*iframe.src = "<?php // echo $for_server ?>";*/
 		});
 	}
 </script>

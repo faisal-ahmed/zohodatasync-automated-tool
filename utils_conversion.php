@@ -1,5 +1,11 @@
 <?php
 
+if (isset($_REQUEST['get_my_csv']) && $_REQUEST['get_my_csv'] === 'download_now') {
+    $parser = new CsvConversion();
+    $parser->download_file();
+    die;
+}
+
 require_once dirname(__FILE__) . '/PHPExcel.php';
 
 class CsvConversion
