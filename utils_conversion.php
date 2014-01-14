@@ -57,10 +57,6 @@ class CsvConversion
 	}
 	
 	public function convert_excel_to_csv($extention, $filename) {
-		$csvArray = array();
-		
-		$objPHPExcel = new PHPExcel();
-		
 		if ($extention === 'xls') $objReader = new PHPExcel_Reader_Excel5();
 		else if ($extention === 'xlsx') $objReader = new PHPExcel_Reader_Excel2007();
 		

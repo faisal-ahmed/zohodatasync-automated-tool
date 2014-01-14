@@ -13,8 +13,6 @@ $dir_name = str_replace('\\', '/', dirname(__FILE__));
 //for localhost
 $resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wordpress/wp-content/plugins/'));
 
-/*include ( plugin_dir_path( __FILE__ ) . 'Utilities.php');
-include ( plugin_dir_path( __FILE__ ) . 'utils_zoho_request.php');*/
 include ( plugin_dir_path( __FILE__ ) . 'utils_conversion.php');
 include ( plugin_dir_path( __FILE__ ) . 'zoho_handler.php');
 include ( plugin_dir_path( __FILE__ ) . 'csvUploadInstruction.php');
@@ -101,7 +99,8 @@ function zdsAutomated_options() {
 			module_load_before_sync($zoho_module_name);
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
-		echo '<div class="updated"><p><strong>Action Completed.</strong></p></div>';
+        data_sync_into_zoho($zoho_module_name);
+		//echo '<div class="updated"><p><strong>Almost Done.</strong></p></div>';
 	} else if ( !isset($zds_automated_hidden) ){
     ?>
 <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
@@ -135,10 +134,10 @@ function zdsAutomated_options() {
 				<label for="zoho_module_name">Zoho module (Only for uploading directly into Zoho): </label>
 				<select id="zoho_module_name" class="styled" name="zoho_module_name">
 					<option selected="selected" value="none">None</option>
-					<option value="<?php echo LEAD_MODULE ?>">Leads</option>
-					<option value="<?php echo ACCOUNT_MODULE ?>">Accounts</option>
+					<!--<option value="<?php /*echo LEAD_MODULE */?>">Leads</option>
+					<option value="<?php /*echo ACCOUNT_MODULE */?>">Accounts</option>-->
 					<option value="<?php echo CONTACT_MODULE ?>">Contacts</option>
-					<option value="<?php echo SALES_ORDER_MODULE ?>">Sales Orders</option>
+					<!--<option value="<?php /*echo SALES_ORDER_MODULE */?>">Sales Orders</option>-->
 				</select>
 			</p>
 			<p class="fileupload">
