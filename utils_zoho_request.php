@@ -47,7 +47,7 @@ class ZohoDataSync extends ZohoIntegrator
         $this->setZohoApiOperationType('getRecordById');
         $extraParameter = array(
             "id" => "$id",
-            "newFormat" => "$newFormat"
+            "newFormat" => $newFormat
         );
         $this->setZohoExtendedUriParameter($extraParameter);
 

@@ -263,7 +263,7 @@ abstract class ZohoIntegrator
 
     private function setParameter($key, $value)
     {
-        $this->uriParameter[$key] = $value;
+        $this->uriParameter["$key"] = $value;
         /*$this->uriParameter = isset($this->uriParameter) && strlen($this->uriParameter) != 0 ? ("{$this->uriParameter}&$key=$value") : ("$key=$value");*/
         return true;
     }
@@ -275,13 +275,13 @@ abstract class ZohoIntegrator
         if (isset($this->xmlData) && $this->xmlData != '')
             $this->setParameter('xmlData', $this->xmlData);
 
-        if (isset($this->wfTrigger) && $this->wfTrigger != false)
+        if (isset($this->wfTrigger) && $this->wfTrigger != 'false')
             $this->setParameter('wfTrigger', $this->wfTrigger);
 
         if ($this->multipleOperation != 'false')
             $this->setParameter('version', $this->multipleOperation);
 
-        if (isset($this->uriParameterExtended) && $this->uriParameterExtended != '') {
+        if (isset($this->uriParameterExtended) && count($this->uriParameterExtended) != 0) {
             foreach ($this->uriParameterExtended as $key => $value)
                 $this->setParameter($key, $value);
         }
@@ -305,10 +305,18 @@ abstract class ZohoIntegrator
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             /* set POST method */
             curl_setopt($ch, CURLOPT_POST, 1);
+            /*To activate RC4-SHA which causes the SSL connection error
+            **Zoho uses RC4-SHA, which was not enabled in cURL by default*/
+            curl_setopt( $ch, CURLOPT_SSL_CIPHER_LIST, 'rsa_rc4_128_sha' );
             /* add POST fields parameters */
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->uriParameter);
             /* execute the cURL */
             $this->zohoResponse = curl_exec($ch);
+
+            if (FALSE === $this->zohoResponse) {
+                throw new Exception(curl_error($ch), curl_errno($ch));
+            }
+
             curl_close($ch);
         } catch (Exception $exception) {
             $this->zohoResponse = $exception;
