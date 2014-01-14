@@ -13,8 +13,8 @@ $dir_name = str_replace('\\', '/', dirname(__FILE__));
 //for localhost
 $resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wordpress/wp-content/plugins/'));
 
-include ( plugin_dir_path( __FILE__ ) . 'Utilities.php');
-include ( plugin_dir_path( __FILE__ ) . 'utils_zoho_request.php');
+/*include ( plugin_dir_path( __FILE__ ) . 'Utilities.php');
+include ( plugin_dir_path( __FILE__ ) . 'utils_zoho_request.php');*/
 include ( plugin_dir_path( __FILE__ ) . 'utils_conversion.php');
 include ( plugin_dir_path( __FILE__ ) . 'zoho_handler.php');
 include ( plugin_dir_path( __FILE__ ) . 'csvUploadInstruction.php');

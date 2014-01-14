@@ -11,10 +11,8 @@ define("CONTACT_MODULE","Contacts");
 define("SALES_ORDER_MODULE","SalesOrders");
 define("INVOICE_MODULE","Invoices");
 define("PRODUCT_MODULE","Products");
-define("DEFAULT_ACCOUNT_NAME","Website Customer");
-define("DEFAULT_CONTACT_NAME","Website Customer");
+define("DEFAULT_CONTACT_ID","673941000000271001"); // Contact last name: oDesk Faisal
 define("DEFAULT_EMAIL_FIELD_NAME","Email");
-define("SALES_ORDER_SUBJECT","Website sales");
 
 /*    $testXmlArray = array(
         1 => array(

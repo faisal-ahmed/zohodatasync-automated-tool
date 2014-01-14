@@ -40,6 +40,20 @@ class ZohoDataSync extends ZohoIntegrator
         return $this->doRequest();
     }
 
+    public function getRecordById($moduleName, $id, $newFormat = 1)
+    {
+        $this->resetWithDefaults();
+        $this->setZohoModuleName("$moduleName");
+        $this->setZohoApiOperationType('getRecordById');
+        $extraParameter = array(
+            "id" => "$id",
+            "newFormat" => "$newFormat"
+        );
+        $this->setZohoExtendedUriParameter($extraParameter);
+
+        return $this->doRequest();
+    }
+
     public function insertRecords($moduleName, $xmlArray, $wfTrigger = 'false', $version = 'false')
     {
         if (($response = $this->checkMandatoryFields($moduleName, $xmlArray)) !== true) return $response;
