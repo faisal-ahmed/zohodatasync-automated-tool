@@ -336,17 +336,15 @@ abstract class ZohoIntegrator
         return false;
     }
 
-    //TODO: Change this checking system
-    protected function checkMandatoryFields($moduleName, $xmlArray)
+    //This method should be called before invoking insert api call of Zoho to check the mandatory fields existance of a module
+    protected function checkMandatoryFields($moduleName)
     {
-        if ($moduleName === ACCOUNT_MODULE && !$this->array_key_exist_recursive('Account Name', $xmlArray))
-            return 'Account Name is mandatory field for Accounts and is missing';
-        if ($moduleName === CONTACT_MODULE && !$this->array_key_exist_recursive('Last Name', $xmlArray))
-            return 'Last Name is mandatory field for Contacts and is missing';
-        if ($moduleName === SALES_ORDER_MODULE) {
-            if (!$this->array_key_exist_recursive('Subject', $xmlArray)) return 'Subject is mandatory field and is missing';
-            if (!$this->array_key_exist_recursive('Account Name', $xmlArray)) return 'Account Name is mandatory field and is missing';
-            if (!$this->array_key_exist_recursive('Product Id', $xmlArray)) return 'Product Id is mandatory field and is missing';
+        $xmlArray = $this->getZohoXmlColumn();
+        global $MANDATORY_FIELD_FOR_MODULE;
+        foreach ($MANDATORY_FIELD_FOR_MODULE[$moduleName] as $key => $value) {
+            if (!$this->array_key_exist_recursive($value, $xmlArray)) {
+                return "$value is a mandatory field for $moduleName and is missing";
+            }
         }
         return true;
     }

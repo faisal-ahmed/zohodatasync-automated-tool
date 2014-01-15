@@ -1,7 +1,6 @@
 <?php
 
 include_once 'ZohoIntegrator.php';
-include_once 'Utilities.php';
 
 class ZohoDataSync extends ZohoIntegrator
 {
@@ -56,16 +55,14 @@ class ZohoDataSync extends ZohoIntegrator
 
     public function insertRecords($moduleName, $xmlArray, $wfTrigger = 'false', $version = 'false')
     {
-        if (($response = $this->checkMandatoryFields($moduleName, $xmlArray)) !== true) return $response;
         $this->resetWithDefaults();
         $this->setZohoModuleName("$moduleName");
         $this->setZohoApiOperationType('insertRecords');
         $this->setRequestMethod('POST');
         if ($wfTrigger != 'false') $this->setWfTrigger($wfTrigger);
         if ($version != 'false') $this->setMultipleOperation($version);
-        $xmlSet = $this->setZohoXmlColumnNameAndValue($xmlArray);
-
-        if ($xmlSet !== true) return $xmlSet;
+        if (($xmlSet = $this->setZohoXmlColumnNameAndValue($xmlArray)) !== true) return $xmlSet;
+        if (($response = $this->checkMandatoryFields($moduleName)) !== true) return $response;
 
         return $this->doRequest();
     }

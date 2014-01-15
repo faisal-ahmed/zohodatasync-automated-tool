@@ -8,11 +8,11 @@ Author Email: faisal.ahmed0001@gmail.com
 */
 
 $dir_name = str_replace('\\', '/', dirname(__FILE__));
-//for live
-//$resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wp-content/plugins/'));
-//for localhost
-$resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wordpress/wp-content/plugins/'));
-
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+    $resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wordpress/wp-content/plugins/'));
+} else {
+    $resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wp-content/plugins/'));
+}
 include ( plugin_dir_path( __FILE__ ) . 'utils_conversion.php');
 include ( plugin_dir_path( __FILE__ ) . 'zoho_handler.php');
 include ( plugin_dir_path( __FILE__ ) . 'csvUploadInstruction.php');
@@ -87,6 +87,8 @@ function zdsAutomated_options() {
 	if (!current_user_can('manage_options'))  {
 		wp_die( __('You do not have sufficient permissions to access this page.') );
 	}
+
+    global $MODULE;
 	
 	extract($_POST);
 	
@@ -113,7 +115,7 @@ function zdsAutomated_options() {
 		<form id="zds_file_convert_into_CSV" name="zds_file_convert_into_CSV" onsubmit="return validate_form_step_1();" enctype="multipart/form-data" method="post" action="">
 			<input type="hidden" name="zds_automated_hidden" value="step1"/>
 			<input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>
-			<h3>Step One</h3>
+			<h3 style="text-decoration: underline;">Step One</h3>
 			<h4>Please upload your file either to upload directly into Zoho or download the CSV format file.</h4>
 			<p>
 				<label for="file_type">Your file type: </label>
@@ -134,10 +136,9 @@ function zdsAutomated_options() {
 				<label for="zoho_module_name">Zoho module (Only for uploading directly into Zoho): </label>
 				<select id="zoho_module_name" class="styled" name="zoho_module_name">
 					<option selected="selected" value="none">None</option>
-					<!--<option value="<?php /*echo LEAD_MODULE */?>">Leads</option>
-					<option value="<?php /*echo ACCOUNT_MODULE */?>">Accounts</option>-->
-					<option value="<?php echo CONTACT_MODULE ?>">Contacts</option>
-					<!--<option value="<?php /*echo SALES_ORDER_MODULE */?>">Sales Orders</option>-->
+                    <?php foreach ($MODULE as $key => $value) { ?>
+                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
+                    <?php } ?>
 				</select>
 			</p>
 			<p class="fileupload">

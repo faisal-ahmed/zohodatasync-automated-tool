@@ -15,6 +15,17 @@ define("SALES_ORDER_MODULE","SalesOrders");
 define("INVOICE_MODULE","Invoices");
 define("PRODUCT_MODULE","Products");
 
+//Zoho Module
+global $MODULE;
+$MODULE = array(
+    LEAD_MODULE => "Leads",
+    ACCOUNT_MODULE => "Accounts",
+    CONTACT_MODULE => "Contacts",
+    SALES_ORDER_MODULE => "Sales Orders",
+    INVOICE_MODULE => "Invoices",
+    PRODUCT_MODULE => "Products",
+);
+
 //Zoho Fields To Exclude For Data Migration
 global $EXCLUDE_FIELDS;
 $EXCLUDE_FIELDS = array(
