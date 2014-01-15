@@ -19,7 +19,7 @@ include ( plugin_dir_path( __FILE__ ) . 'csvUploadInstruction.php');
 
 /********** Admin Panel **************************/
 function pr_scripts_styles() {
-	if (strpos($_SERVER['REQUEST_URI'], 'zds-automated-id') !== false) {
+	if (strpos($_SERVER['REQUEST_URI'], 'zds-automated-id') !== false || strpos($_SERVER['REQUEST_URI'], 'set-zoho-authtoken') !== false) {
 		/*   REGISTER ALL JS FOR SITE */
 		wp_register_style('style', plugins_url( 'css/style.css' , __FILE__ ));
 		wp_register_style('mystyle', plugins_url( 'style.css' , __FILE__ ));
@@ -80,7 +80,46 @@ add_action( 'admin_enqueue_scripts', 'pr_scripts_styles' );
 add_action('admin_menu', 'zds_plugin_menu');
 
 function zds_plugin_menu() {
-	add_options_page('ZohoDataSync Automated Tool', 'ZohoDataSync Automated Tool', 'manage_options', 'zds-automated-id', 'zdsAutomated_options');
+    add_menu_page('ZohoDataSync Automated Tool', 'ZohoDataSync Automated Tool', 'manage_options', 'zds-automated-id', 'zdsAutomated_options', '', 40);
+    add_submenu_page('zds-automated-id', 'Zoho Authtoken', 'Zoho Authtoken', 'manage_options', 'set-zoho-authtoken', 'setZohoAuthtoken');
+}
+
+function setZohoAuthtoken() {
+    if (!current_user_can('manage_options'))  {
+        wp_die( __('You do not have sufficient permissions to access this page.') );
+    }
+
+    $updated = false;
+    if (isset($_REQUEST['authtoken']) && $_REQUEST['authtoken'] != '') {
+        update_option('zoho_authtoken', $_REQUEST['authtoken']);
+        $updated = true;
+    }
+?>
+<div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
+    <div class="block_head">
+        <div class="bheadl"></div>
+        <div class="bheadr"></div>
+        <h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
+    </div>
+    <div class="block_content">
+        <?php if ($updated) { ?><div class="message success">Your Zoho authtoken has been updated.</div><?php } ?>
+        <form id="authtoken_set" name="authtoken_set" onsubmit="return validate_authtoken();" method="post" action="">
+            <h4>Please set your Zoho Authtoken here</h4>
+            <p>
+                <label for="authtoken">Your Zoho Authtoken: </label>
+                <input type="text" class="text small" name="authtoken" id="authtoken" value="<?php echo get_option( 'zoho_authtoken' ); ?>"/>
+            </p>
+            <hr />
+            <p>
+                <input type="submit" class="submit long" value="Update Authtoken" />
+            </p>
+        </form>
+    </div>
+    <div class="bendl"></div>
+    <div class="bendr"></div>
+    <div class="clear"></div>
+</div>
+<?php
 }
 
 function zdsAutomated_options() {
@@ -102,7 +141,6 @@ function zdsAutomated_options() {
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
         data_sync_into_zoho($zoho_module_name);
-		//echo '<div class="updated"><p><strong>Almost Done.</strong></p></div>';
 	} else if ( !isset($zds_automated_hidden) ){
     ?>
 <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
@@ -177,6 +215,15 @@ function zdsAutomated_options() {
 		
 		return true;
 	}
+
+    function validate_authtoken(){
+        if ($('#authtoken').val == '') {
+            alert("Authtoken can not be empty.");
+            return false;
+        }
+
+        return true;
+    }
 </script>
 
 <?php

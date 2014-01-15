@@ -7,7 +7,8 @@ class ZohoDataSync extends ZohoIntegrator
     public function __construct()
     {
         $this->resetWithDefaults();
-        $authtokenSet = $this->setZohoAuthToken(AUTH_TOKEN);
+        /*$authtokenSet = $this->setZohoAuthToken(AUTH_TOKEN);*/
+        $authtokenSet = $this->setZohoAuthToken(get_option( 'zoho_authtoken' ));
         if ($authtokenSet !== true) {
             echo 'Please provide authtoken or set auth token first';
             die();
