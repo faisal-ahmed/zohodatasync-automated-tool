@@ -159,7 +159,13 @@ $(function () {
 		function() { $(this).find('ul').fadeOut(100); }
 	);
 	
-	
+	// Left menu hover
+	$('ul li.wp-has-submenu').hover(
+		function() { $(this).addClass('opensub')},
+		function() { $(this).removeClass('opensub')}
+	);
+
+
 		
 	// Image delete confirmation
 	$('ul.imglist .delete a').click(function() {
