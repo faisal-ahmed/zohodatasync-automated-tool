@@ -54,16 +54,24 @@ class ZohoDataSync extends ZohoIntegrator
         return $this->doRequest();
     }
 
-    public function insertRecords($moduleName, $xmlArray, $wfTrigger = 'false', $version = 'false')
+    public function insertRecords($moduleName, $xmlArray, $duplicateCheck = 'false', $wfTrigger = 'false', $version = 'false')
     {
         $this->resetWithDefaults();
         $this->setZohoModuleName("$moduleName");
         $this->setZohoApiOperationType('insertRecords');
         $this->setRequestMethod('POST');
+        if ($duplicateCheck != 'false') {
+            $version = 4;
+            $this->setZohoExtendedUriParameter(array('duplicateCheck' => $duplicateCheck));
+        }
         if ($wfTrigger != 'false') $this->setWfTrigger($wfTrigger);
         if ($version != 'false') $this->setMultipleOperation($version);
         if (($xmlSet = $this->setZohoXmlColumnNameAndValue($xmlArray)) !== true) return $xmlSet;
-        if (($response = $this->checkMandatoryFields($moduleName)) !== true) return $response;
+        if (count($xmlArray) == 1 && ($response = $this->checkMandatoryFields($moduleName)) !== true){
+            return $response;
+        } else if (count($xmlArray) > 1 && ($response = $this->checkMandatoryFieldsForMultiple($moduleName)) !== true) {
+            return $response;
+        }
 
         return $this->doRequest();
     }
@@ -136,7 +144,7 @@ class ZohoDataSync extends ZohoIntegrator
         return $this->doRequest();
     }
 
-    public function checkError($xml) {
+    public function errorFound($xml) {
         if ((isset($xml->nodata->code) && trim($xml->nodata->code) !== "")
             || (isset($xml->error->code) && trim($xml->error->code) !== "")) {
             return true;

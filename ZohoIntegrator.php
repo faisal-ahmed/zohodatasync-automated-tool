@@ -337,13 +337,27 @@ abstract class ZohoIntegrator
     }
 
     //This method should be called before invoking insert api call of Zoho to check the mandatory fields existance of a module
-    protected function checkMandatoryFields($moduleName)
+    public function checkMandatoryFields($moduleName)
     {
         $xmlArray = $this->getZohoXmlColumn();
         global $MANDATORY_FIELD_FOR_MODULE;
         foreach ($MANDATORY_FIELD_FOR_MODULE[$moduleName] as $key => $value) {
             if (!$this->array_key_exist_recursive($value, $xmlArray)) {
                 return "$value is a mandatory field for $moduleName and is missing";
+            }
+        }
+        return true;
+    }
+
+    public function checkMandatoryFieldsForMultiple($moduleName)
+    {
+        $xmlArray = $this->getZohoXmlColumn();
+        global $MANDATORY_FIELD_FOR_MODULE;
+        foreach($xmlArray as $row => $singleElementToInsert) {
+            foreach ($MANDATORY_FIELD_FOR_MODULE[$moduleName] as $key => $value) {
+                if (!$this->array_key_exist_recursive($value, $singleElementToInsert)) {
+                    return "$value is a mandatory field for $moduleName and is missing at record number $row.";
+                }
             }
         }
         return true;
