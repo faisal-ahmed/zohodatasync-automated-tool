@@ -3,8 +3,11 @@
 require_once dirname(__FILE__) . '/utils_conversion.php';
 
 function uploadInstruction() {
-    $for_localhost = '/wordpress/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
-    $for_server = '/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+    if ($_SERVER['HTTP_HOST'] == 'localhost') {
+        $url = '/wordpress/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+    } else {
+        $url = '/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+    }
 ?>
 <script type="text/javascript">
 	$(function () {
@@ -16,8 +19,7 @@ function uploadInstruction() {
 			iframe.style.visibility = 'hidden';
 			document.body.appendChild(iframe);
 		}
-		iframe.src = "<?php echo $for_localhost ?>";
-		/*iframe.src = "<?php // echo $for_server ?>";*/
+		iframe.src = "<?php echo $url ?>";
 	});
 	function download_csv(){
 		var file_download = $.post( "", {'get_my_csv': 'download_now'}, function( data ) {
@@ -29,8 +31,7 @@ function uploadInstruction() {
 				iframe.style.visibility = 'hidden';
 				document.body.appendChild(iframe);
 			}
-			iframe.src = "<?php echo $for_localhost ?>";
-			/*iframe.src = "<?php // echo $for_server ?>";*/
+			iframe.src = "<?php echo $url ?>";
 		});
 	}
 </script>
