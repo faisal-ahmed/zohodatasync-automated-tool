@@ -135,6 +135,14 @@ class ZohoDataSync extends ZohoIntegrator
 
         return $this->doRequest();
     }
+
+    public function checkError($xml) {
+        if ((isset($xml->nodata->code) && trim($xml->nodata->code) !== "")
+            || (isset($xml->error->code) && trim($xml->error->code) !== "")) {
+            return true;
+        }
+        return false;
+    }
 }
 
 ?>

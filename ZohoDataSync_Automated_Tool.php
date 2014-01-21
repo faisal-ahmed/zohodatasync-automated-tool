@@ -128,7 +128,7 @@ function zdsAutomated_options() {
 	}
 
     global $MODULE;
-	
+
 	extract($_POST);
 	
     if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step1' ) {
@@ -140,7 +140,7 @@ function zdsAutomated_options() {
 			module_load_before_sync($zoho_module_name);
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
-        data_sync_into_zoho($zoho_module_name);
+        data_sync_into_zoho($zoho_module_name, $zoho_column_matching);
 	} else if ( !isset($zds_automated_hidden) ){
     ?>
 <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">

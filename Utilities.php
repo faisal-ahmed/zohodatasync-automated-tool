@@ -14,8 +14,12 @@ define("CONTACT_MODULE","Contacts");
 define("SALES_ORDER_MODULE","SalesOrders");
 define("INVOICE_MODULE","Invoices");
 define("PRODUCT_MODULE","Products");
+define("COUNTRY_MODULE","Countries");
+define("DEAL_MODULE","Deals");
+define("QUOTE_MODULE","Quotes");
 
 //Zoho Module
+//array format == (Module name => Module title to show)
 global $MODULE;
 $MODULE = array(
     LEAD_MODULE => "Leads",
@@ -24,6 +28,9 @@ $MODULE = array(
     SALES_ORDER_MODULE => "Sales Orders",
     INVOICE_MODULE => "Invoices",
     PRODUCT_MODULE => "Products",
+    COUNTRY_MODULE => "Countries",
+    DEAL_MODULE => "Deals",
+    QUOTE_MODULE => "Quotes",
 );
 
 //Zoho Fields To Exclude For Data Migration

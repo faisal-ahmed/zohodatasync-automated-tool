@@ -78,6 +78,50 @@ class CsvConversion
 		
 		$this->create_array_2_csv_local_file($csvArray);
 	}
+
+    public function parse_csv_column(){
+        $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
+        $return = array();
+
+        while ($csv_line = fgetcsv($fp)) {
+            for ($i = 0, $j = count($csv_line); $i < $j; $i++) {
+                $temp_string = trim($csv_line[$i]);
+                $return[str_replace(' ', '_', $temp_string)] = $temp_string;
+            }
+            break;
+        }
+
+        fclose($fp);
+
+        return $return;
+    }
+
+    public function parse_csv_to_array($keys) {
+        $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
+        $return = array();
+        $keys_index = array();
+        $count = 0;
+
+        while ($csv_line = fgetcsv($fp)) {
+            if ($count++ == 0) {
+                for ($i = 0, $j = count($csv_line); $i < $j; $i++) {
+                    $keys_index[$csv_line[$i]] = $i;
+                }
+                continue;
+            }
+            if ($count == 5) break;
+            $ret = array();
+            foreach ($keys as $key => $csvColumn) {
+                $temp_string = $key;
+                $ret[str_replace('_', ' ', $temp_string)] = trim($csv_line[$keys_index[$csvColumn]]);
+            }
+            $return[$count-1] = $ret;
+        }
+
+        fclose($fp);
+
+        return $return;
+    }
 }
 
 ?>

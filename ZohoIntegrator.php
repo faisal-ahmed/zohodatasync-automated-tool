@@ -281,7 +281,7 @@ abstract class ZohoIntegrator
         if ($this->multipleOperation != 'false')
             $this->setParameter('version', $this->multipleOperation);
 
-        if (isset($this->uriParameterExtended) && count($this->uriParameterExtended) != 0) {
+        if (isset($this->uriParameterExtended) && is_array($this->uriParameterExtended)) {
             foreach ($this->uriParameterExtended as $key => $value)
                 $this->setParameter($key, $value);
         }
