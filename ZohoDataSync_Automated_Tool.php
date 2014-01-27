@@ -82,6 +82,11 @@ add_action('admin_menu', 'zds_plugin_menu');
 function zds_plugin_menu() {
     add_menu_page('ZohoDataSync Automated Tool', 'ZohoDataSync Automated Tool', 'manage_options', 'zds-automated-id', 'zdsAutomated_options', '', 40);
     add_submenu_page('zds-automated-id', 'Zoho Authtoken', 'Zoho Authtoken', 'manage_options', 'set-zoho-authtoken', 'setZohoAuthtoken');
+    add_submenu_page('zds-missing-data', 'Zoho Missing Data', 'Zoho Missing Data', 'manage_options', 'show-zoho-missing-data', 'showMissingData');
+}
+
+function showMissingData() {
+
 }
 
 function setZohoAuthtoken() {

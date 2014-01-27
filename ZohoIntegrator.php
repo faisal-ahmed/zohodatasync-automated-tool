@@ -264,7 +264,6 @@ abstract class ZohoIntegrator
     private function setParameter($key, $value)
     {
         $this->uriParameter["$key"] = $value;
-        /*$this->uriParameter = isset($this->uriParameter) && strlen($this->uriParameter) != 0 ? ("{$this->uriParameter}&$key=$value") : ("$key=$value");*/
         return true;
     }
 

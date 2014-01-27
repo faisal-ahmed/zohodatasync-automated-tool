@@ -24,7 +24,7 @@ class ZohoDataSync extends ZohoIntegrator
         return $this->sendCurl();
     }
 
-    public function searchRecordsWithCustomField($moduleName, $fieldName, $fieldValue, $matchingExpression = 'contains')
+    public function searchRecordsWithCustomField($moduleName, $fieldName, $fieldValue, $fromIndex = null, $toIndex = null, $matchingExpression = 'contains')
     {
         $this->resetWithDefaults();
         $this->setZohoModuleName("$moduleName");
@@ -35,6 +35,17 @@ class ZohoDataSync extends ZohoIntegrator
             "searchCondition" => "($fieldName|$matchingExpression|$fieldValue)",
             "selectColumns" => "All",
         );
+
+        if ($fromIndex != null) {
+            $extraParameter['fromIndex'] = $fromIndex;
+        } else {
+            $extraParameter['fromIndex'] = 1;
+        }
+        if ($toIndex != null) {
+            $extraParameter['toIndex'] = $toIndex;
+        } else {
+            $extraParameter['toIndex'] = 200;
+        }
         $this->setZohoExtendedUriParameter($extraParameter);
 
         return $this->doRequest();
@@ -50,6 +61,28 @@ class ZohoDataSync extends ZohoIntegrator
             "newFormat" => $newFormat
         );
         $this->setZohoExtendedUriParameter($extraParameter);
+
+        return $this->doRequest();
+    }
+
+    /*
+     * Param: @type
+     * Empty - To retrieve all fields from the module
+     * 1 - To retrieve all fields from the summary view
+     * 2 - To retrieve all mandatory fields from the module
+     *
+    */
+    public function getFields($moduleName, $type = null) // 1 for all fields and 2 for mandatory fields
+    {
+        $this->resetWithDefaults();
+        $this->setZohoModuleName("$moduleName");
+        $this->setZohoApiOperationType('getFields');
+        if ($type != null) {
+            $extraParameter = array(
+                "type" => "$type"
+            );
+            $this->setZohoExtendedUriParameter($extraParameter);
+        }
 
         return $this->doRequest();
     }
