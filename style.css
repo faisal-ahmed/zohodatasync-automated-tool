@@ -11,3 +11,7 @@
 .redBorder{
 	border-color: red !important;
 }
+
+.checkboxAlignMiddle input[type=checkbox]{
+    margin-top: 5px !important;
+}

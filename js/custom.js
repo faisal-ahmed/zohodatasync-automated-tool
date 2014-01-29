@@ -175,21 +175,22 @@ $(function () {
 			return false;
 		}
 	});
-	
+
+    var dirname = $('#donatchart').val();
 	// Style file input
 	$("input[type=file]").filestyle({ 
-	    image: "../wp-content/plugins/ZohoDataSync_Automated_Tool/images/upload.gif",
+	    image: "../wp-content/plugins/" + dirname + "/images/upload.gif",
 	    imageheight : 30,
 	    imagewidth : 80,
 	    width : 250
 	});
 	
 	$(".file").attr("readonly","readonly");
-	
+
 	// File upload
 	if ($('#fileupload').length) {
 		new AjaxUpload('fileupload', {
-			action: '../wp-content/plugins/ZohoDataSync_Automated_Tool/upload-handler.php',
+			action: '../wp-content/plugins/' + dirname + '/upload-handler.php',
 			autoSubmit: true,
 			name: 'userfile',
 			responseType: 'text/html',

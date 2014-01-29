@@ -13,13 +13,14 @@ if ($_SERVER['HTTP_HOST'] == 'localhost') {
 } else {
     $resource_dir_name = "http://".$_SERVER['HTTP_HOST']. substr($dir_name, strpos($dir_name, '/wp-content/plugins/'));
 }
-include ( plugin_dir_path( __FILE__ ) . 'utils_conversion.php');
-include ( plugin_dir_path( __FILE__ ) . 'zoho_handler.php');
-include ( plugin_dir_path( __FILE__ ) . 'csvUploadInstruction.php');
 
 /********** Admin Panel **************************/
+
+include_once ( plugin_dir_path( __FILE__ ) . 'includeLibraryFiles.php');
 function pr_scripts_styles() {
-	if (strpos($_SERVER['REQUEST_URI'], 'zds-automated-id') !== false || strpos($_SERVER['REQUEST_URI'], 'set-zoho-authtoken') !== false) {
+	if (strpos($_SERVER['REQUEST_URI'], 'zds-automated-id') !== false ||
+        strpos($_SERVER['REQUEST_URI'], 'set-zoho-authtoken') !== false ||
+        strpos($_SERVER['REQUEST_URI'], 'show-zoho-missing-data') !== false) {
 		/*   REGISTER ALL JS FOR SITE */
 		wp_register_style('style', plugins_url( 'css/style.css' , __FILE__ ));
 		wp_register_style('mystyle', plugins_url( 'style.css' , __FILE__ ));
@@ -76,17 +77,21 @@ function pr_scripts_styles() {
 }
 
 add_action( 'admin_enqueue_scripts', 'pr_scripts_styles' );
-
 add_action('admin_menu', 'zds_plugin_menu');
 
 function zds_plugin_menu() {
-    add_menu_page('ZohoDataSync Automated Tool', 'ZohoDataSync Automated Tool', 'manage_options', 'zds-automated-id', 'zdsAutomated_options', '', 40);
+    add_menu_page('Zoho Data Migrator', 'Zoho Data Migrator', 'manage_options', 'zds-automated-id', 'zdsAutomated_options', '', 40);
     add_submenu_page('zds-automated-id', 'Zoho Authtoken', 'Zoho Authtoken', 'manage_options', 'set-zoho-authtoken', 'setZohoAuthtoken');
-    add_submenu_page('zds-missing-data', 'Zoho Missing Data', 'Zoho Missing Data', 'manage_options', 'show-zoho-missing-data', 'showMissingData');
+    add_submenu_page('zds-automated-id', 'Zoho Missing Data', 'Zoho Missing Data', 'manage_options', 'show-zoho-missing-data', 'showMissingData');
 }
 
 function showMissingData() {
+    if (!current_user_can('manage_options'))  {
+        wp_die( __('You do not have sufficient permissions to access this page.') );
+    }
 
+    migationFailedData();
+    echo '<button id="donatchart" value="' . basename(__DIR__) . '" style="display:none;"></button>';
 }
 
 function setZohoAuthtoken() {
@@ -99,32 +104,8 @@ function setZohoAuthtoken() {
         update_option('zoho_authtoken', $_REQUEST['authtoken']);
         $updated = true;
     }
-?>
-<div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
-    <div class="block_head">
-        <div class="bheadl"></div>
-        <div class="bheadr"></div>
-        <h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
-    </div>
-    <div class="block_content">
-        <?php if ($updated) { ?><div class="message success">Your Zoho authtoken has been updated.</div><?php } ?>
-        <form id="authtoken_set" name="authtoken_set" onsubmit="return validate_authtoken();" method="post" action="">
-            <h4>Please set your Zoho Authtoken here</h4>
-            <p>
-                <label for="authtoken">Your Zoho Authtoken: </label>
-                <input type="text" class="text small" name="authtoken" id="authtoken" value="<?php echo get_option( 'zoho_authtoken' ); ?>"/>
-            </p>
-            <hr />
-            <p>
-                <input type="submit" class="submit long" value="Update Authtoken" />
-            </p>
-        </form>
-    </div>
-    <div class="bendl"></div>
-    <div class="bendr"></div>
-    <div class="clear"></div>
-</div>
-<?php
+    authtokenView($updated);
+    echo '<button id="donatchart" value="' . basename(__DIR__) . '" style="display:none;"></button>';
 }
 
 function zdsAutomated_options() {
@@ -132,106 +113,22 @@ function zdsAutomated_options() {
 		wp_die( __('You do not have sufficient permissions to access this page.') );
 	}
 
-    global $MODULE;
-
 	extract($_POST);
 	
     if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step1' ) {
 		$parser = new CsvConversion();
 		$parser->convert_excel_to_csv(substr($uploaded_file_name, (strpos($uploaded_file_name, '.') + 1) ), $uploaded_file_name);
 		if ( isset($action) && $action == 'csv' ) {
-			uploadInstruction();
+			uploadInstructionView();
 		} else if ( isset($action) && $action == 'zoho' ) {
-			module_load_before_sync($zoho_module_name);
+			zohoMigratorStepTwoView($zoho_module_name);
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
-        data_sync_into_zoho($zoho_module_name, $zoho_column_matching, $duplicateCheck);
+        //TODO: Only first 5 data are sent to Zoho for now. To change this goto: parse_csv_to_array() at utils_conversion.php
+        zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck);
 	} else if ( !isset($zds_automated_hidden) ){
-    ?>
-<div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
-		<h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
-	</div>
-	<div class="block_content">
-		<form id="zds_file_convert_into_CSV" name="zds_file_convert_into_CSV" onsubmit="return validate_form_step_1();" enctype="multipart/form-data" method="post" action="">
-			<input type="hidden" name="zds_automated_hidden" value="step1"/>
-			<input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>
-			<h3 style="text-decoration: underline;">Step One</h3>
-			<h4>Please upload your file either to upload directly into Zoho or download the CSV format file.</h4>
-			<p>
-				<label for="file_type">Your file type: </label>
-				<select id="file_type" class="styled" name="file_type">
-					<option selected="selected" value="">None</option>
-					<option value="xlsx">Microsoft Excel 2007</option>
-					<option value="xls">Microsoft Excel 2003</option>
-				</select>
-			</p>
-			<p>
-				<label for="action">You want to: </label>
-				<select id="action" class="styled" name="action">
-					<option value="csv" selected="selected">Download CSV</option>
-					<option value="zoho">Upload into Zoho</option>
-				</select>
-			</p>		
-			<p id="zoho_module_p">
-				<label for="zoho_module_name">Zoho module (Only for uploading directly into Zoho): </label>
-				<select id="zoho_module_name" class="styled" name="zoho_module_name">
-					<option selected="selected" value="none">None</option>
-                    <?php foreach ($MODULE as $key => $value) { ?>
-                        <option value="<?php echo $key ?>"><?php echo $value ?></option>
-                    <?php } ?>
-				</select>
-			</p>
-			<p class="fileupload">
-				<label>Your file: </label><br/>
-				<input id="fileupload" type="file"/>
-				<span id="uploadmsg">Max size depends on your server uploading configuration.</span>
-			</p>
-			<hr />			
-			<p>
-				<input type="submit" class="submit small" value="Submit" />
-			</p>
-		</form>
-	</div>
-	<div class="bendl"></div>
-	<div class="bendr"></div>
-	<div class="clear"></div>
-</div>
-<script type="text/javascript">
-	function validate_form_step_1(){
-		$('#zoho_module_p .cmf-skinned-select').removeClass('redBorder');
-		var selectedAction = document.getElementById("action").value;
-		var selectedZohoModule = document.getElementById("zoho_module_name").value;
-		var uploadedFile = document.getElementById("uploaded_file_name").value;
-		
-		if (selectedAction == 'zoho' && selectedZohoModule == 'none') {
-			alert("Please select correct zoho module to upload your data.");
-			$('#zoho_module_p .cmf-skinned-select').addClass('redBorder');
-			return false;
-		}
-		
-		if (uploadedFile == '') {
-			alert("Please upload your data file first.");
-			$('.fileupload .file').addClass('redBorder');
-			return false;
-		}
-		
-		return true;
+        zohoMigratorStepOneView();
 	}
-
-    function validate_authtoken(){
-        if ($('#authtoken').val == '') {
-            alert("Authtoken can not be empty.");
-            return false;
-        }
-
-        return true;
-    }
-</script>
-
-<?php
-	}
+    echo '<button id="donatchart" value="' . basename(__DIR__) . '" style="display:none;"></button>';
 }
 ?>

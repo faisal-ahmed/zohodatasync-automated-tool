@@ -1,12 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/utils_conversion.php';
-
-function uploadInstruction() {
+function uploadInstructionView() {
     if ($_SERVER['HTTP_HOST'] == 'localhost') {
-        $url = '/wordpress/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+        $url = '/wordpress/wp-content/plugins/' . basename(__DIR__) . '/utils_conversion.php?get_my_csv=download_now';
     } else {
-        $url = '/wp-content/plugins/zohodatasync_automated_tool/utils_conversion.php?get_my_csv=download_now';
+        $url = '/wp-content/plugins/' . basename(__DIR__) . '/utils_conversion.php?get_my_csv=download_now';
     }
 ?>
 <script type="text/javascript">
