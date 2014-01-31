@@ -96,7 +96,7 @@ class CsvConversion
         return $return;
     }
 
-    public function parse_csv_to_array($keys, $start = 1, $max = 100) {
+    public function parse_csv_to_array($keys, $start = 1, $max = MAX_RECORD_TO_INSERT_VIA_insertRecords) {
         $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
         $return = array();
         $keys_index = array();
@@ -104,22 +104,22 @@ class CsvConversion
         $recordCount = 1;
 
         while ($csv_line = fgetcsv($fp)) {
-            if ($count++ == 0) {
+            if ($count == 0) {
                 for ($i = 0, $j = count($csv_line); $i < $j; $i++) {
                     $keys_index[$csv_line[$i]] = $i;
                 }
-                continue;
             }
             if ($count == 5) break; // TODO: this is only for now
-            if ($count == ($start + $max)) break;
-            else if ($count >= $start) {
+            if ($count >= $start) {
                 $ret = array();
                 foreach ($keys as $key => $csvColumn) {
                     $temp_string = $key;
                     $ret[str_replace('_', ' ', $temp_string)] = trim($csv_line[$keys_index[$csvColumn]]);
                 }
-                $return[$recordCount++] = $ret;
+                $return[$recordCount] = $ret;
+                if ($recordCount++ >= $max) break;
             }
+            $count++;
         }
 
         fclose($fp);

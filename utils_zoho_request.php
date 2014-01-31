@@ -184,6 +184,10 @@ class ZohoDataSync extends ZohoIntegrator
         }
         return false;
     }
+
+    public function parseError($errorXml){
+
+    }
 }
 
 ?>
