@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function zohoMigratorStepOneView(){
+function zohoMigratorStepOneView($success = '', $error = ''){
     global $MODULE;
 ?>
 <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
@@ -17,6 +17,8 @@ function zohoMigratorStepOneView(){
         <h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
     </div>
     <div class="block_content">
+        <?php if ($success != '') { ?><div class="message success"><?php echo $success ?></div><?php } ?>
+        <?php if ($error != '') { ?><div class="message errormsg"><?php echo $error ?></div><?php } ?>
         <form id="zds_file_convert_into_CSV" name="zds_file_convert_into_CSV" onsubmit="return validate_form_step_1();" enctype="multipart/form-data" method="post" action="">
             <input type="hidden" name="zds_automated_hidden" value="step1"/>
             <input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>

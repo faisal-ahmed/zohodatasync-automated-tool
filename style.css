@@ -18,12 +18,12 @@
 
 .sortable tr th, .sortable tr td {
     border-right: 1px solid;
-    border-right-color: #555555;
+    border-right-color: #dddddd;
 }
 
 .sortable tr th{
     border-top: 1px solid;
-    border-top-color: #555555;
+    border-top-color: #dddddd;
 }
 
 .sortable tr th:hover, .headerSortDown:hover, .headerSortUp:hover{

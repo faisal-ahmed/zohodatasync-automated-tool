@@ -9,6 +9,7 @@
 
 // $zoho_column_matching is a key => value matching where key = zoho column and value = file's column
 function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck){
+    global $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE;
     $xmlArray = buildXmlArray($zoho_column_matching, $zoho_module_name);
     $dataMigrationControllerObj = new ZohoDataSync();
     $error = '';
@@ -28,19 +29,26 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
             $updated = array();
             $inserted = array();
             $ignored = array();
-            foreach ($xml->result->row as $key => $insertedObject) {
-                if (trim($insertedObject->success->code) == 2000 ) {
-                    $inserted[] = $insertedObject['no'];
+            if (!in_array($zoho_module_name, $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE)) {
+                foreach ($xml->result->row as $key => $insertedObject) {
+                    if (trim($insertedObject->success->code) == 2000 ) {
+                        $inserted[] = $insertedObject['no'];
+                    }
+                    else if (trim($insertedObject->success->code) == 2001 ) {
+                        $updated[] = $insertedObject['no'];
+                    }
+                    else if (trim($insertedObject->success->code) == 2002 ) {
+                        $ignored[] = $dataProcessed + $insertedObject['no'];
+                    }
                 }
-                else if (trim($insertedObject->success->code) == 2001 ) {
-                    $updated[] = $insertedObject['no'];
+                $ignored = array_merge($ignored, array_diff(range(1, getOffsetCountToSendDataPerRequest($zoho_module_name)), array_merge($inserted, $updated)));
+            } else {
+                if (trim($xml->result->message) == 'Record(s) added successfully') {
+                    $inserted[] = $bulkKey+1;
+                } else {
+                    $ignored[] = $bulkKey+1;
                 }
-                else if (trim($insertedObject->success->code) == 2002 ) {
-                    $ignored[] = $dataProcessed + $insertedObject['no'];
-                }
-                $dataProcessed += $offset;
             }
-            $ignored = array_merge($ignored, array_diff(range(1, getOffsetCountToSendDataPerRequest($zoho_module_name)), array_merge($inserted, $updated)));
             $insertedCount += count($inserted);
             $updatedCount += count($updated);
             $ignoredCount += count($ignored);
@@ -50,27 +58,25 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
                 foreach ($rowsValue as $row => $rowValue) {
                     $ignoredDataToBuildCSV[] = $rowValue;
                 }
-                $ignored = array();
             }
         } else {
-            $error = 'Something went wrong! Please try again later. <br/>Please check the Zoho authtoken/Zoho daily API limits/Your Internet connection.';
-            zohoMigratorStepTwoView($zoho_module_name, $error, '');
+            $error = 'Something went wrong! Please try again later. Please check the Zoho authtoken/Zoho daily API limits/Your Internet connection.';
+            zohoMigratorStepOneView('', $error);
         }
+        $dataProcessed += $offset;
     }
     if ($insertedCount != 0 || $updatedCount != 0 || $ignoredCount != 0) {
-        $successMessage = count($inserted) . " record(s) successfully inserted, ";
-        $successMessage .= count($updated) . " record(s) successfully updated and ";
-        $successMessage .= count($ignored) . " record(s) ignored.<br/>Please visit report section for details.";
+        $successMessage = $insertedCount . " record(s) added successfully, ";
+        $successMessage .= $updatedCount . " record(s) updated successfully and ";
+        $successMessage .= $ignoredCount . " record(s) ignored. Please see report for details.";
     } else {
-        $successMessage = '';
+        $successMessage = 'No Result! Your request has been processed.';
     }
 
-    if (count($ignoredDataToBuildCSV) > 1) {
-        $csvConversion = new CsvConversion();
-        $csvConversion->array_to_csv_report_file($ignoredDataToBuildCSV);
-    }
+    $csvConversion = new CsvConversion();
+    $csvConversion->array_to_csv_report_file($ignoredDataToBuildCSV);
 
-    zohoMigratorStepTwoView($zoho_module_name, $error, $successMessage);
+    zohoMigratorStepOneView($successMessage, $error);
 }
 
 function buildIgnoredDataColumn(){

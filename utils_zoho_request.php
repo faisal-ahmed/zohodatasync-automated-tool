@@ -93,18 +93,18 @@ class ZohoDataSync extends ZohoIntegrator
         $this->setZohoModuleName("$moduleName");
         $this->setZohoApiOperationType('insertRecords');
         $this->setRequestMethod('POST');
-        if ($duplicateCheck != 'false') {
+        if ($duplicateCheck != 'false' && count($xmlArray) > 1 ) {
             $version = 4;
             $this->setZohoExtendedUriParameter(array('duplicateCheck' => $duplicateCheck));
         }
         if ($wfTrigger != 'false') $this->setWfTrigger($wfTrigger);
         if ($version != 'false') $this->setMultipleOperation($version);
         if (($xmlSet = $this->setZohoXmlColumnNameAndValue($xmlArray)) !== true) return $xmlSet;
-        if (count($xmlArray) == 1 && ($response = $this->checkMandatoryFields($moduleName)) !== true){
+        /*if (count($xmlArray) == 1 && ($response = $this->checkMandatoryFields($moduleName)) !== true){
             return $response;
         } else if (count($xmlArray) > 1 && ($response = $this->checkMandatoryFieldsForMultiple($moduleName)) !== true) {
             return $response;
-        }
+        }*/
 
         return $this->doRequest();
     }

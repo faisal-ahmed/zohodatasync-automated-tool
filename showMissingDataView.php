@@ -29,7 +29,7 @@ function migationFailedData()
                     <thead>
                     <tr>
                         <?php foreach ($dataColumn as $key => $value) { ?>
-                        <th class="header headerSortUp" style="cursor: pointer; <?php if ($key == 0 || $key == 1) echo "font-weight: bold;"; ?>">
+                        <th class="header headerSortUp" style="cursor: pointer; <?php if ($key == 0 || $key == 1) echo "font-weight: bold;"; if ($key == 0) echo "border-left: 1px solid #dddddd;"; ?>">
                             <?php echo $value; ?>
                         </th>
                         <?php } ?>
@@ -37,13 +37,19 @@ function migationFailedData()
                     </thead>
 
                     <tbody>
-                    <?php foreach ($reportData as $key => $row) { ?>
+                    <?php if (count($reportData) > 0) { foreach ($reportData as $key => $row) { ?>
                     <tr>
                         <?php foreach ($row as $key1 => $value) { ?>
-                        <td style="<?php if ($key1 == 0 || $key1 == 1) echo "font-weight: bold;"; ?>">
+                        <td style="<?php if ($key1 == 0 || $key1 == 1) echo "font-weight: bold;"; if ($key1 == 0) echo "border-left: 1px solid #dddddd;"; ?>">
                             <?php if ($key1 != 1) { echo $value; } else { echo date("Y-m-d H:i:s", $value); }?>
                         </td>
                         <?php } ?>
+                    </tr>
+                    <?php } } else { ?>
+                    <tr>
+                        <td colspan="<?php echo count($dataColumn) ?>" style="font-weight: bold;text-align: center;border-left: 1px solid #dddddd;">
+                            <?php echo 'All data have been migrated successfully last time.'?>
+                        </td>
                     </tr>
                     <?php } ?>
                     </tbody>
