@@ -9,6 +9,9 @@
 
 function migationFailedData()
 {
+    $csvConversion = new CsvConversion();
+    $dataColumn = $csvConversion->parse_csv_column('report.csv');
+    $reportData = $csvConversion->get_report();
     ?>
     <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
         <div class="block_head">
@@ -25,58 +28,27 @@ function migationFailedData()
                 <table cellpadding="0" cellspacing="0" width="100%" class="sortable">
                     <thead>
                     <tr>
-                        <th width="10" class="checkboxAlignMiddle"><input type="checkbox" class="check_all"/></th>
-                        <th>Page title</th>
-                        <th>Status</th>
-                        <th>Date created</th>
-                        <th>Author</th>
-                        <td>&nbsp;</td>
+                        <?php foreach ($dataColumn as $key => $value) { ?>
+                        <th class="header headerSortUp" style="cursor: pointer; <?php if ($key == 0 || $key == 1) echo "font-weight: bold;"; ?>">
+                            <?php echo $value; ?>
+                        </th>
+                        <?php } ?>
                     </tr>
                     </thead>
 
                     <tbody>
+                    <?php foreach ($reportData as $key => $row) { ?>
                     <tr>
-                        <td class="checkboxAlignMiddle"><input type="checkbox"/></td>
-                        <td><a href="#">Aorem ipsum dolor</a></td>
-                        <td>Published</td>
-                        <td>20.03.2010</td>
-                        <td><a href="#">John Doe</a></td>
-                        <td class="delete"><a href="#">Delete</a></td>
+                        <?php foreach ($row as $key1 => $value) { ?>
+                        <td style="<?php if ($key1 == 0 || $key1 == 1) echo "font-weight: bold;"; ?>">
+                            <?php if ($key1 != 1) { echo $value; } else { echo date("Y-m-d H:i:s", $value); }?>
+                        </td>
+                        <?php } ?>
                     </tr>
-
-                    <tr>
-                        <td class="checkboxAlignMiddle"><input type="checkbox"/></td>
-                        <td><a href="#">Zn ac libero nunc, vel congue neque</a></td>
-                        <td>Published</td>
-                        <td>18.03.2010</td>
-                        <td><a href="#">John Doe</a></td>
-                        <td class="delete"><a href="#">Delete</a></td>
-                    </tr>
+                    <?php } ?>
                     </tbody>
 
                 </table>
-
-                <div class="tableactions">
-                    <select style="height: 30px;">
-                        <option>Actions</option>
-                        <option>Delete</option>
-                        <option>Edit</option>
-                    </select>
-
-                    <input type="submit" class="submit long" value="Apply to selected"/>
-                </div>
-
-                <div class="pagination right" style="padding-top: 10px;">
-                    <a href="#">&laquo;</a>
-                    <a href="#" class="active">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">6</a>
-                    <a href="#">&raquo;</a>
-                </div>
-
             </form>
         </div>
         <div class="bendl"></div>

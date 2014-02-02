@@ -15,3 +15,17 @@
 .checkboxAlignMiddle input[type=checkbox]{
     margin-top: 5px !important;
 }
+
+.sortable tr th, .sortable tr td {
+    border-right: 1px solid;
+    border-right-color: #555555;
+}
+
+.sortable tr th{
+    border-top: 1px solid;
+    border-top-color: #555555;
+}
+
+.sortable tr th:hover, .headerSortDown:hover, .headerSortUp:hover{
+    color: #3AA3E6 !important;
+}

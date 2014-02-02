@@ -82,10 +82,10 @@ add_action('admin_menu', 'zds_plugin_menu');
 function zds_plugin_menu() {
     add_menu_page('Zoho Data Migrator', 'Zoho Data Migrator', 'manage_options', 'zds-automated-id', 'zdsAutomated_options', '', 40);
     add_submenu_page('zds-automated-id', 'Zoho Authtoken', 'Zoho Authtoken', 'manage_options', 'set-zoho-authtoken', 'setZohoAuthtoken');
-    add_submenu_page('zds-automated-id', 'Zoho Missing Data', 'Zoho Missing Data', 'manage_options', 'show-zoho-missing-data', 'showMissingData');
+    add_submenu_page('zds-automated-id', 'Zoho Report', 'Zoho Report', 'manage_options', 'show-zoho-missing-data', 'showReport');
 }
 
-function showMissingData() {
+function showReport() {
     if (!current_user_can('manage_options'))  {
         wp_die( __('You do not have sufficient permissions to access this page.') );
     }
@@ -124,7 +124,6 @@ function zdsAutomated_options() {
 			zohoMigratorStepTwoView($zoho_module_name);
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
-        //TODO: Only first 5 data are sent to Zoho for now. To change this goto: parse_csv_to_array() at utils_conversion.php
         zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck);
 	} else if ( !isset($zds_automated_hidden) ){
         zohoMigratorStepOneView();

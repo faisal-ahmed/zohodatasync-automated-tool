@@ -14,7 +14,28 @@ class CsvConversion
     {
     }
 
-	private function create_array_2_csv_local_file(array &$csv_array)
+    public function array_to_csv_report_file(array $data){
+        $report_file_name = "report.csv";
+        if (count($data) == 0) {
+            return null;
+        }
+
+        $csv = '';
+        $csv_handler = fopen ( dirname(__FILE__) . '/uploads/' . $report_file_name,'w');
+        foreach ($data as $key => $value){
+            foreach ($value as $key1 => $value1){
+                $value1 = '"' . $value1 . '"';
+                if (!$key1) $csv .= $value1;
+                else $csv .= ",$value1";
+            }
+            $csv .= "\n";
+        }
+
+        fwrite ($csv_handler, $csv);
+        fclose ($csv_handler);
+    }
+
+	private function create_array_2_csv_local_file(array $csv_array)
 	{
 		if (count($csv_array) == 0) {
 			return null;
@@ -79,8 +100,12 @@ class CsvConversion
 		$this->create_array_2_csv_local_file($csvArray);
 	}
 
-    public function parse_csv_column(){
-        $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
+    public function parse_csv_column($filename = null){
+        if ($filename == null) {
+            $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
+        } else {
+            $fp = fopen(dirname(__FILE__) . '/uploads/' . $filename, 'r') or die("can't open file");
+        }
         $return = array();
 
         while ($csv_line = fgetcsv($fp)) {
@@ -93,6 +118,46 @@ class CsvConversion
 
         fclose($fp);
 
+        return $return;
+    }
+
+    public function get_report(){
+        $fp = fopen(dirname(__FILE__) . '/uploads/report.csv', 'r') or die("can't open file");
+        $return = array();
+
+        $count = 0;
+        while ($csv_line = fgetcsv($fp)) {
+            if ($count++ == 0) continue;
+            $temp = array();
+            for ($i = 0, $j = count($csv_line); $i < $j; $i++) {
+                $temp[] = trim($csv_line[$i]);
+            }
+            $return[] = $temp;
+        }
+
+        fclose($fp);
+
+        return $return;
+    }
+
+    public function getDataOfRows($rows){
+        $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
+        $return = array();
+
+        $count = 0;
+        while ($csv_line = fgetcsv($fp)) {
+            if (in_array($count, $rows)) {
+                $tempArray = array();
+                for ($i = 0, $j = count($csv_line); $i < $j; $i++) {
+                    $temp_string = trim($csv_line[$i]);
+                    $tempArray[] = $temp_string;
+                }
+                $return[] = $tempArray;
+            }
+            $count++;
+        }
+
+        fclose($fp);
         return $return;
     }
 
@@ -109,7 +174,6 @@ class CsvConversion
                     $keys_index[$csv_line[$i]] = $i;
                 }
             }
-            if ($count == 5) break; // TODO: this is only for now
             if ($count >= $start) {
                 $ret = array();
                 foreach ($keys as $key => $csvColumn) {

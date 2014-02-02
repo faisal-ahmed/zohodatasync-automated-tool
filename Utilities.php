@@ -4,8 +4,6 @@
  * Author: Mohammad Faisal Ahmed <faisal.ahmed0001@gmail.com>
  */
 
-//TODO: This authtoken is replaced by the database field.
-define("AUTH_TOKEN", "5e702408ec8f9da1dd38acc66707bb1d");
 //Max record count to insert via bulk insert
 define("MAX_RECORD_TO_INSERT_VIA_insertRecords", 100);
 
