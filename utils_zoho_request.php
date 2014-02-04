@@ -95,7 +95,7 @@ class ZohoDataSync extends ZohoIntegrator
         $this->setRequestMethod('POST');
         if ($duplicateCheck != 'false' && count($xmlArray) > 1 ) {
             $version = 4;
-            $this->setZohoExtendedUriParameter(array('duplicateCheck' => $duplicateCheck));
+            $this->setZohoExtendedUriParameter(array('duplicateCheck' => (int)$duplicateCheck));
         }
         if ($wfTrigger != 'false') $this->setWfTrigger($wfTrigger);
         if ($version != 'false') $this->setMultipleOperation($version);

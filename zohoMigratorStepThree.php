@@ -23,13 +23,14 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     foreach ($xmlArray as $bulkKey => $bulkRecords) {
         $response = $dataMigrationControllerObj->insertRecords($zoho_module_name, $bulkRecords, "$duplicateCheck");
         $xml = simplexml_load_string($response);
-        if ($dataMigrationControllerObj->errorFound($xml)) {
-            $error = "Zoho error. Parse the error code";
-        } else if ($xml !== false) {
+        echo "<pre>";
+        print_r($xml);
+        die;
+        if ($xml !== false) {
             $updated = array();
             $inserted = array();
             $ignored = array();
-            if (!in_array($zoho_module_name, $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE)) {
+            if (!in_array($zoho_module_name, $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE) && !$dataMigrationControllerObj->errorFound($xml)) {
                 foreach ($xml->result->row as $key => $insertedObject) {
                     if (trim($insertedObject->success->code) == 2000 ) {
                         $inserted[] = $insertedObject['no'];
@@ -43,7 +44,7 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
                 }
                 $ignored = array_merge($ignored, array_diff(range(1, getOffsetCountToSendDataPerRequest($zoho_module_name)), array_merge($inserted, $updated)));
             } else {
-                if (trim($xml->result->message) == 'Record(s) added successfully') {
+                if (isset($xml->result->message) && trim($xml->result->message) == 'Record(s) added successfully') {
                     $inserted[] = $bulkKey+1;
                 } else {
                     $ignored[] = $bulkKey+1;
