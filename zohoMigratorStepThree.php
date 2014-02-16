@@ -40,7 +40,7 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
                         $ignored[] = $dataProcessed + $insertedObject['no'];
                     }
                 }
-                $ignored = array_merge($ignored, array_diff(range(1, getOffsetCountToSendDataPerRequest($zoho_module_name)), array_merge($inserted, $updated)));
+                $ignored = array_merge($ignored, array_diff(range(1, count($bulkRecords)), array_merge($inserted, $updated)));
             } else {
                 if (isset($xml->result->message) && trim($xml->result->message) == 'Record(s) added successfully') {
                     $inserted[] = $bulkKey+1;
@@ -66,8 +66,10 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     }
     if ($insertedCount != 0 || $updatedCount != 0 || $ignoredCount != 0) {
         $successMessage = $insertedCount . " record(s) added successfully, ";
-        $successMessage .= $updatedCount . " record(s) updated successfully and ";
-        $successMessage .= $ignoredCount . " record(s) ignored. Please see report for details.";
+        $successMessage .= $updatedCount . " record(s) updated successfully";
+        if ($ignoredCount) {
+            $successMessage .= " and " . $ignoredCount . " record(s) ignored. Please see report for details.";
+        }
     } else {
         $successMessage = 'No Result! Your request has been processed.';
     }
