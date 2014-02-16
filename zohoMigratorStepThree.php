@@ -21,11 +21,9 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     $currentTime = time();
     $dataProcessed = 0;
     foreach ($xmlArray as $bulkKey => $bulkRecords) {
+        echo $duplicateCheck;
         $response = $dataMigrationControllerObj->insertRecords($zoho_module_name, $bulkRecords, "$duplicateCheck");
         $xml = simplexml_load_string($response);
-        echo "<pre>";
-        print_r($xml);
-        die;
         if ($xml !== false) {
             $updated = array();
             $inserted = array();

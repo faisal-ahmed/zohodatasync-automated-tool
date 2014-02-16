@@ -124,6 +124,9 @@ function zdsAutomated_options() {
 			zohoMigratorStepTwoView($zoho_module_name);
 		}
 	} else if( isset($zds_automated_hidden) && $zds_automated_hidden == 'step2' ) {
+        if (!isset($duplicateCheck)) {
+            $duplicateCheck = 'false';
+        }
         zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck);
 	} else if ( !isset($zds_automated_hidden) ){
         zohoMigratorStepOneView();

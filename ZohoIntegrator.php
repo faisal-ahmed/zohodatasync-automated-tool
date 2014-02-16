@@ -200,7 +200,11 @@ abstract class ZohoIntegrator
 
     public function getFullRequestUriToZoho()
     {
-        return $this->requestUriToZoho . $this->uriParameter;
+        $ret = $this->requestUriToZoho;
+        foreach ($this->uriParameter as $key => $value) {
+            $ret .= "&$key=$value";
+        }
+        return $ret;
     }
 
     public function getXMLData()
@@ -218,7 +222,10 @@ abstract class ZohoIntegrator
             } else {
                 $finalOutput = $value;
             }
-            if (is_string($key) && (is_string($value) || !array_key_exists(1, $value))) $xmlData .= "<FL val='$key'>$finalOutput</FL>";
+            if ($finalOutput == '') continue;
+            if (is_string($key) && (is_string($value) || !array_key_exists(1, $value))) {
+                $xmlData .= "<FL val='$key'>$finalOutput</FL>";
+            }
             else $xmlData .= $finalOutput;
         }
 
@@ -234,7 +241,12 @@ abstract class ZohoIntegrator
         $xmlData = '';
         $count = 1;
         foreach ($this->zohoXmlColumn as $key => $value) {
-            $xmlData .= "<row no='$count'>" . $this->XMLGeneration($value, 1, 'row', false) . "</row>";
+            $xmlString = $this->XMLGeneration($value, 1, 'row', false);
+            if ($xmlString == '') {
+                $count++;
+                continue;
+            }
+            $xmlData .= "<row no='$count'>" . $xmlString . "</row>";
             $count++;
         }
 
@@ -256,7 +268,7 @@ abstract class ZohoIntegrator
         else if (empty($this->zohoScope))
             return 'Please set the Zoho scope correctly';
 
-        $this->requestUriToZoho = $this->zohoApiUrl . '/' . $this->zohoModuleName . '/' . $this->zohoApiOperationType . "?authtoken={$this->zohoAuthToken}&scope={$this->zohoScope}";
+        $this->requestUriToZoho = $this->zohoApiUrl . '/' . $this->zohoModuleName . '/' . $this->zohoApiOperationType . "?authtoken={$this->zohoAuthToken}&scope={$this->zohoScope}&newFormat=1";
 
         return true;
     }
@@ -333,33 +345,6 @@ abstract class ZohoIntegrator
                 return true;
         }
         return false;
-    }
-
-    //This method should be called before invoking insert api call of Zoho to check the mandatory fields existance of a module
-    public function checkMandatoryFields($moduleName)
-    {
-        $xmlArray = $this->getZohoXmlColumn();
-        global $MANDATORY_FIELD_FOR_MODULE;
-        foreach ($MANDATORY_FIELD_FOR_MODULE[$moduleName] as $key => $value) {
-            if (!$this->array_key_exist_recursive($value, $xmlArray)) {
-                return "$value is a mandatory field for $moduleName and is missing";
-            }
-        }
-        return true;
-    }
-
-    public function checkMandatoryFieldsForMultiple($moduleName)
-    {
-        $xmlArray = $this->getZohoXmlColumn();
-        global $MANDATORY_FIELD_FOR_MODULE;
-        foreach($xmlArray as $row => $singleElementToInsert) {
-            foreach ($MANDATORY_FIELD_FOR_MODULE[$moduleName] as $key => $value) {
-                if (!$this->array_key_exist_recursive($value, $singleElementToInsert)) {
-                    return "$value is a mandatory field for $moduleName and is missing at record number $row.";
-                }
-            }
-        }
-        return true;
     }
 
     abstract public function doRequest();

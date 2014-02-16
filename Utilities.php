@@ -55,7 +55,7 @@ $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE = array(
     QUOTE_MODULE,
     SALES_ORDER_MODULE,
     INVOICE_MODULE,
-    PURCHASE_ORDER_MODULE
+    PURCHASE_ORDER_MODULE,
 );
 
 //Zoho Fields To Exclude For Data Migration
@@ -65,7 +65,6 @@ $EXCLUDE_FIELDS = array(
     "ACCOUNTID",
     "CONTACTID",
     "CAMPAIGNID",
-    "Contact Owner",
     "Created Time",
     "Created By",
     "Modified Time",
