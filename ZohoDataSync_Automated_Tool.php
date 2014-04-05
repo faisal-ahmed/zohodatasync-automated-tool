@@ -127,7 +127,7 @@ function zdsAutomated_options() {
         if (!isset($duplicateCheck)) {
             $duplicateCheck = 'false';
         }
-        zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck);
+        zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck, $mendatoryArray);
 	} else if ( !isset($zds_automated_hidden) ){
         zohoMigratorStepOneView();
 	}

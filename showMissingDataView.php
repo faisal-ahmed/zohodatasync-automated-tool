@@ -20,6 +20,8 @@ function migationFailedData()
             <h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
         </div>
         <div class="block_content">
+            <h2>These rows of data were failed to migrate into Zoho CRM in your last data migration.</h2>
+            <h3><span style="color: red;font-size: 1.3em;font-weight: bolder;">*</span> denotes the mandatory field as per your mapping.</h3>
             <form action="" method="post">
                 <?php if ($success != '') { ?>
                     <div class="message success"><?php echo $success ?></div><?php } ?>

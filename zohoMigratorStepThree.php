@@ -8,7 +8,8 @@
  */
 
 // $zoho_column_matching is a key => value matching where key = zoho column and value = file's column
-function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck){
+function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck, $mendatoryArray){
+    $mendatoryArray = explode(',', $mendatoryArray);
     global $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE;
     $xmlArray = buildXmlArray($zoho_column_matching, $zoho_module_name);
     $dataMigrationControllerObj = new ZohoDataSync();
@@ -16,7 +17,7 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     $insertedCount = 0;
     $updatedCount = 0;
     $ignoredCount = 0;
-    $ignoredDataToBuildCSV = array(buildIgnoredDataColumn());
+    $ignoredDataToBuildCSV = array(buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching));
     $offset = getOffsetCountToSendDataPerRequest($zoho_module_name);
     $currentTime = time();
     $dataProcessed = 0;
@@ -80,13 +81,17 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     zohoMigratorStepOneView($successMessage, $error);
 }
 
-function buildIgnoredDataColumn(){
+function buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching){
     $csvColumnForIgnoredData = array('Module_Name', 'Migration_Time');
     $csvConversion = new CsvConversion();
     $csv_column_name = $csvConversion->parse_csv_column();
 
     foreach ($csv_column_name as $key => $value){
-        $csvColumnForIgnoredData[] = $key;
+        $mendatory = '';
+        if ( ($keyMatching = array_search($key, $zoho_column_matching)) !== FALSE && in_array($keyMatching, $mendatoryArray)){
+            $mendatory = "<span style='color: red;font-size: 1.3em;font-weight: bolder;'>*</span>";
+        }
+        $csvColumnForIgnoredData[] = $key . $mendatory;
     }
 
     return $csvColumnForIgnoredData;
