@@ -9,10 +9,31 @@
 
 function migationFailedData()
 {
+    if ($_SERVER['HTTP_HOST'] == 'localhost') {
+        $url = '/wordpress/wp-content/plugins/' . basename(__DIR__) . '/utils_conversion.php?get_my_csv=download_now&file=report';
+    } else {
+        $url = '/wp-content/plugins/' . basename(__DIR__) . '/utils_conversion.php?get_my_csv=download_now&file=report';
+    }
+
     $csvConversion = new CsvConversion();
     $dataColumn = $csvConversion->parse_csv_column('report.csv');
     $reportData = $csvConversion->get_report();
     ?>
+    <script type="text/javascript">
+        function download_csv(){
+            var file_download = $.post( "", {'get_my_csv': 'download_now', 'file': 'report'}, function( data ) {
+                var iframe = document.getElementById("download-container");
+                if (iframe === null)
+                {
+                    iframe = document.createElement('iframe');
+                    iframe.id = "download-container";
+                    iframe.style.visibility = 'hidden';
+                    document.body.appendChild(iframe);
+                }
+                iframe.src = "<?php echo $url ?>";
+            });
+        }
+    </script>
     <div class="block" style="margin: 10px 20px 25px 0px; padding-bottom: 0px;">
         <div class="block_head">
             <div class="bheadl"></div>
@@ -21,7 +42,8 @@ function migationFailedData()
         </div>
         <div class="block_content">
             <h2>These rows of data were failed to migrate into Zoho CRM in your last data migration.</h2>
-            <h3><span style="color: red;font-size: 1.3em;font-weight: bolder;">*</span> denotes the mandatory field as per your mapping.</h3>
+            <h3 style="display: inline-block;"><span style="color: red;font-size: 1.3em;font-weight: bolder;">*</span> denotes the mandatory field as per your mapping.</h3>
+            <h3 style="display: inline-block; float: right;"><a href="#" onclick="download_csv();">Download this report file</a></h3>
             <form action="" method="post">
                 <?php if ($success != '') { ?>
                     <div class="message success"><?php echo $success ?></div><?php } ?>

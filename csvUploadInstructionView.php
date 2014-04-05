@@ -41,7 +41,7 @@ function uploadInstructionView() {
 		<h2 style="margin: 0; float: right;"><a href="#" onclick="location.reload(true);">Back to Step one</a></h2>
 	</div>
 	<div class="block_content">
-		<h2>If your download hasn't been started yet then please click <a href="#" onclick="javascript: download_csv();">here</a> to download your CSV file.<br/><br/></h2>
+		<h2>If your download hasn't been started yet then please click <a href="#" onclick="download_csv();">here</a> to download your CSV file.<br/><br/></h2>
 		<h3>Things you need to remember:<br/>You can only upload your CSV file direct into Zoho CRM in some selected modules only. It's always good to use automated migration system to upload your file into zoho.
         But if you use automated system then you cannot cross your allowed daily API limit of Zoho. However, If you have large file(s) and you don't have enough API call remaining today then
         split your file(s) into some small files and migrate them at Zoho daily basis via API. Or You can increase your daily API limit by increasing your organization users of Zoho.</h3>
