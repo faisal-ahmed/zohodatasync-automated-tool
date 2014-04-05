@@ -18,6 +18,7 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     $updatedCount = 0;
     $ignoredCount = 0;
     $ignoredDataToBuildCSV = array(buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching));
+    $ignoredDataToBuildCSV1 = array(buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching, true));
     $offset = getOffsetCountToSendDataPerRequest($zoho_module_name);
     $currentTime = time();
     $dataProcessed = 0;
@@ -56,7 +57,8 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
                 sort($ignored);
                 $rowsValue = getDataOfRowsForReport($ignored, $zoho_module_name, $currentTime);
                 foreach ($rowsValue as $row => $rowValue) {
-                    $ignoredDataToBuildCSV[] = $rowValue;
+                    $ignoredDataToBuildCSV[] = $rowValue[0];
+                    $ignoredDataToBuildCSV1[] = $rowValue[1];
                 }
             }
         } else {
@@ -77,12 +79,17 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
 
     $csvConversion = new CsvConversion();
     $csvConversion->array_to_csv_report_file($ignoredDataToBuildCSV);
+    $csvConversion->array_to_csv_report_file($ignoredDataToBuildCSV1, true);
 
     zohoMigratorStepOneView($successMessage, $error);
 }
 
-function buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching){
-    $csvColumnForIgnoredData = array('Module_Name', 'Migration_Time');
+function buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching, $forReportDownload = false){
+    if ($forReportDownload === false) {
+        $csvColumnForIgnoredData = array('Module_Name', 'Migration_Time');
+    } else {
+        $csvColumnForIgnoredData = array();
+    }
     $csvConversion = new CsvConversion();
     $csv_column_name = $csvConversion->parse_csv_column();
 
@@ -91,7 +98,11 @@ function buildIgnoredDataColumn($mendatoryArray, $zoho_column_matching){
         if ( ($keyMatching = array_search($key, $zoho_column_matching)) !== FALSE && in_array($keyMatching, $mendatoryArray)){
             $mendatory = "<span style='color: red;font-size: 1.3em;font-weight: bolder;'>*</span>";
         }
-        $csvColumnForIgnoredData[] = $key . $mendatory;
+        if ($forReportDownload === false) {
+            $csvColumnForIgnoredData[] = $key . $mendatory;
+        } else {
+            $csvColumnForIgnoredData[] = $key;
+        }
     }
 
     return $csvColumnForIgnoredData;
@@ -126,7 +137,10 @@ function getDataOfRowsForReport($rows, $zoho_module_name, $currentTime) {
     $return = array();
     $rowsData = $csvConversion->getDataOfRows($rows);
     foreach ($rowsData as $key => $value) {
-        $return[] = array_merge($initialItem, $value);
+        $ret = array();
+        $ret[0] = array_merge($initialItem, $value);
+        $ret[1] = $value;
+        $return[] = $ret;
     }
     return $return;
 }

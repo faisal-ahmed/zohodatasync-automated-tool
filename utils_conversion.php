@@ -18,8 +18,12 @@ class CsvConversion
     {
     }
 
-    public function array_to_csv_report_file(array $data){
-        $report_file_name = "report.csv";
+    public function array_to_csv_report_file(array $data, $forReportDownload = false){
+        if ($forReportDownload === false) {
+            $report_file_name = "report.csv";
+        } else {
+            $report_file_name = "reportForDownload.csv";
+        }
         if (count($data) == 0) {
             return null;
         }
@@ -65,7 +69,7 @@ class CsvConversion
         if ($report == false) {
             $fileName = 'convertedFile.csv';
         } else {
-            $fileName = 'report.csv';
+            $fileName = 'reportForDownload.csv';
         }
 		if (file_exists( dirname(__FILE__) . '/uploads/' . $fileName)) {
 			header('Content-Description: File Transfer');
