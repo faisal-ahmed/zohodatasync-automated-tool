@@ -32,14 +32,15 @@ function zohoMigratorStepOneView($success = '', $error = ''){
                     <option value="xls">Microsoft Excel 2003</option>
                 </select>
             </p>
-            <p>
+            <input type="hidden" name="action" id="action" value="zoho"/>
+<!--            <p>
                 <label for="action">You want to: </label>
                 <select id="action" class="styled" name="action">
                     <option value="csv" selected="selected">Download CSV</option>
                     <option value="zoho">Upload into Zoho</option>
                 </select>
             </p>
-            <p id="zoho_module_p">
+-->            <p id="zoho_module_p">
                 <label for="zoho_module_name">Zoho module (Only for uploading directly into Zoho): </label>
                 <select id="zoho_module_name" class="styled" name="zoho_module_name">
                     <option selected="selected" value="none">None</option>
