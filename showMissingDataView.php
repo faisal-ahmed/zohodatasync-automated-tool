@@ -40,20 +40,16 @@ function migationFailedData()
             <div class="bheadr"></div>
             <h2 style="margin: 0;">Zoho Data Sync Automated Tools Settings</h2>
         </div>
-        <div class="block_content">
+        <div class="block_content" style="overflow-x: auto;">
             <h2>These rows of data were failed to migrate into Zoho CRM in your last data migration.</h2>
             <h3 style="display: inline-block;"><span style="color: red;font-size: 1.3em;font-weight: bolder;">*</span> denotes the mandatory field as per your mapping.</h3>
             <h3 style="display: inline-block; float: right;"><a href="#" onclick="download_csv();">Download this report file</a></h3>
             <form action="" method="post">
-                <?php if ($success != '') { ?>
-                    <div class="message success"><?php echo $success ?></div><?php } ?>
-                <?php if ($error != '') { ?>
-                    <div class="message errormsg"><?php echo $error ?></div><?php } ?>
-                <table cellpadding="0" cellspacing="0" width="100%" class="sortable">
+                <table cellpadding="0" cellspacing="0" width="100%" style="padding-right: 15px;" class="sortable">
                     <thead>
                     <tr>
                         <?php foreach ($dataColumn as $key => $value) { ?>
-                        <th class="header headerSortUp" style="cursor: pointer; <?php if ($key == 0 || $key == 1) echo "font-weight: bold;"; if ($key == 0) echo "border-left: 1px solid #dddddd;"; ?>">
+                        <th class="header headerSortUp" style="cursor: pointer; padding: 10px 25px 10px 10px; <?php if ($key == 0 || $key == 1) { echo "font-weight: bold;"; } if ($key == 0) { echo "border-left: 1px solid #dddddd;"; } ?>">
                             <?php echo $value; ?>
                         </th>
                         <?php } ?>
