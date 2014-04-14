@@ -222,9 +222,8 @@ abstract class ZohoIntegrator
             } else {
                 $finalOutput = $value;
             }
-            if ($finalOutput == '') continue;
             if (is_string($key) && (is_string($value) || !array_key_exists(1, $value))) {
-                $xmlData .= "<FL val='$key'>$finalOutput</FL>";
+                $xmlData .= "<FL val='$key'><![CDATA[$finalOutput]]></FL>";
             }
             else $xmlData .= $finalOutput;
         }

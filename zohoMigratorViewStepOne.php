@@ -23,13 +23,13 @@ function zohoMigratorStepOneView($success = '', $error = ''){
             <input type="hidden" name="zds_automated_hidden" value="step1"/>
             <input type="hidden" id="uploaded_file_name" name="uploaded_file_name" value=""/>
             <h3 style="text-decoration: underline;">Step One</h3>
-            <h4>Please upload your file either to upload directly into Zoho or download the CSV format file.</h4>
+            <h4>Please upload your file to migrate data into ZOHO CRM.</h4>
             <p>
                 <label for="file_type">Your file type: </label>
                 <select id="file_type" class="styled" name="file_type">
                     <option selected="selected" value="">None</option>
-                    <option value="xlsx">Microsoft Excel 2007</option>
-                    <option value="xls">Microsoft Excel 2003</option>
+                    <option value="xlsx">Microsoft Excel 2007 (.xlsx)</option>
+                    <option value="xls">Microsoft Excel 2003 (.xls)</option>
                 </select>
             </p>
             <input type="hidden" name="action" id="action" value="zoho"/>

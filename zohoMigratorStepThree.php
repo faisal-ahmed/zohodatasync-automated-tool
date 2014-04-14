@@ -11,7 +11,7 @@
 function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching, $duplicateCheck, $mendatoryArray){
     $mendatoryArray = explode(',', $mendatoryArray);
     global $MULTIPLE_INSERT_NOT_ALLOWED_FOR_MODULE;
-    $xmlArray = buildXmlArray($zoho_column_matching, $zoho_module_name);
+    $xmlArray = buildXmlArray($zoho_column_matching, $zoho_module_name, $mendatoryArray);
     $dataMigrationControllerObj = new ZohoDataSync();
     $error = '';
     $insertedCount = 0;
@@ -23,7 +23,6 @@ function zohoMigratorStepThreeDataSync($zoho_module_name, $zoho_column_matching,
     $currentTime = time();
     $dataProcessed = 0;
     foreach ($xmlArray as $bulkKey => $bulkRecords) {
-        echo $duplicateCheck;
         $response = $dataMigrationControllerObj->insertRecords($zoho_module_name, $bulkRecords, "$duplicateCheck");
         $xml = simplexml_load_string($response);
         if ($xml !== false) {
@@ -118,14 +117,18 @@ function getOffsetCountToSendDataPerRequest($zoho_module_name) {
     return $trashholdValueForMultipleInsertion;
 }
 
-function buildXmlArray($zoho_column_matching, $zoho_module_name){
+function buildXmlArray($zoho_column_matching, $zoho_module_name, $mendatoryArray){
     $trashholdValueForMultipleInsertion = getOffsetCountToSendDataPerRequest($zoho_module_name);
     $xmlMultipleArray = array();
     $newConverter = new CsvConversion();
     $start = 1;
-    while (count($tempArray = $newConverter->parse_csv_to_array($zoho_column_matching, $start, $trashholdValueForMultipleInsertion))) {
-        $xmlMultipleArray[] = $tempArray;
-        $start += $trashholdValueForMultipleInsertion;
+    while (1) {
+        $tempArray = $newConverter->parse_csv_to_array($zoho_column_matching, $start, $trashholdValueForMultipleInsertion, $mendatoryArray);
+        $xmlMultipleArray[] = $tempArray['data'];
+        $start = $tempArray['next_start'];
+        if (count($tempArray['data']) == 0) {
+            break;
+        }
     }
 
     return $xmlMultipleArray;

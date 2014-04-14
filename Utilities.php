@@ -5,7 +5,7 @@
  */
 
 //Max record count to insert via bulk insert
-define("MAX_RECORD_TO_INSERT_VIA_insertRecords", 100);
+define("MAX_RECORD_TO_INSERT_VIA_insertRecords", 98);
 
 //Zoho Modules Name
 define("LEAD_MODULE", "Leads");

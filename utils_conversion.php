@@ -18,7 +18,8 @@ class CsvConversion
     {
     }
 
-    public function array_to_csv_report_file(array $data, $forReportDownload = false){
+    public function array_to_csv_report_file(array $data, $forReportDownload = false)
+    {
         if ($forReportDownload === false) {
             $report_file_name = "report.csv";
         } else {
@@ -29,9 +30,9 @@ class CsvConversion
         }
 
         $csv = '';
-        $csv_handler = fopen ( dirname(__FILE__) . '/uploads/' . $report_file_name,'w');
-        foreach ($data as $key => $value){
-            foreach ($value as $key1 => $value1){
+        $csv_handler = fopen(dirname(__FILE__) . '/uploads/' . $report_file_name, 'w');
+        foreach ($data as $key => $value) {
+            foreach ($value as $key1 => $value1) {
                 $value1 = '"' . $value1 . '"';
                 if (!$key1) $csv .= $value1;
                 else $csv .= ",$value1";
@@ -39,82 +40,85 @@ class CsvConversion
             $csv .= "\n";
         }
 
-        fwrite ($csv_handler, $csv);
-        fclose ($csv_handler);
+        fwrite($csv_handler, $csv);
+        fclose($csv_handler);
     }
 
-	private function create_array_2_csv_local_file(array $csv_array)
-	{
-		if (count($csv_array) == 0) {
-			return null;
-		}
-		
-		$csv = '';
-		$csv_handler = fopen ( dirname(__FILE__) . '/uploads/convertedFile.csv','w');
-		foreach ($csv_array as $key => $value){
-			foreach ($value as $key1 => $value1){
-				$value1 = '"' . $value1 . '"';
-				if (!$key1) $csv .= $value1;
-				else $csv .= ",$value1";
-			}
-			$csv .= "\n";
-		}
-				
-		fwrite ($csv_handler, $csv);
-		fclose ($csv_handler);
-	}
-	
-	public function download_file($report) {
-		ob_start();
+    private function create_array_2_csv_local_file(array $csv_array)
+    {
+        if (count($csv_array) == 0) {
+            return null;
+        }
+
+        $csv = '';
+        $csv_handler = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'w');
+        foreach ($csv_array as $key => $value) {
+            foreach ($value as $key1 => $value1) {
+                $value1 = '"' . $value1 . '"';
+                if (!$key1) $csv .= $value1;
+                else $csv .= ",$value1";
+            }
+            $csv .= "\n";
+        }
+
+        fwrite($csv_handler, $csv);
+        fclose($csv_handler);
+    }
+
+    public function download_file($report)
+    {
+        ob_start();
         if ($report == false) {
             $fileName = 'convertedFile.csv';
         } else {
             $fileName = 'reportForDownload.csv';
         }
-		if (file_exists( dirname(__FILE__) . '/uploads/' . $fileName)) {
-			header('Content-Description: File Transfer');
-			header("Content-Type: application/force-download");
-			header("Content-Type: application/octet-stream");
-			header("Content-Type: application/download");
-			header("Content-type: text/csv");
-			header('Content-Disposition: attachment; filename='.date("Y-m-d_H.i.s_") . $fileName);
-			header('Content-Transfer-Encoding: binary');
-			header('Expires: 0');
-			header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
-			header('Pragma: public');
-			header('Content-Length: ' . filesize( dirname(__FILE__) . '/uploads/' . $fileName));
-			ob_clean();
-			flush();
-			readfile( dirname(__FILE__) . '/uploads/' . $fileName);
-		}
-		ob_end_flush();
-		die;
-	}
-	
-	public function convert_excel_to_csv($extention, $filename) {
-		if ($extention === 'xls') $objReader = new PHPExcel_Reader_Excel5();
-		else if ($extention === 'xlsx') $objReader = new PHPExcel_Reader_Excel2007();
-		
-		$objReader->setReadDataOnly(true);
-		$objPHPExcel = $objReader->load( dirname(__FILE__) . "/uploads/$filename" );
-		$rowIterator = $objPHPExcel->getActiveSheet()->getRowIterator();
+        if (file_exists(dirname(__FILE__) . '/uploads/' . $fileName)) {
+            header('Content-Description: File Transfer');
+            header("Content-Type: application/force-download");
+            header("Content-Type: application/octet-stream");
+            header("Content-Type: application/download");
+            header("Content-type: text/csv");
+            header('Content-Disposition: attachment; filename=' . date("Y-m-d_H.i.s_") . $fileName);
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize(dirname(__FILE__) . '/uploads/' . $fileName));
+            ob_clean();
+            flush();
+            readfile(dirname(__FILE__) . '/uploads/' . $fileName);
+        }
+        ob_end_flush();
+        die;
+    }
 
-		$csvArray = array();
-		foreach($rowIterator as $row){
-			$cellIterator = $row->getCellIterator();
-			$cellIterator->setIterateOnlyExistingCells(false);
-			$rowIndex = $row->getRowIndex() - 1;
-			$csvArray[$rowIndex] = array();
-			 
-			foreach ($cellIterator as $cell) {
-				$csvArray[$rowIndex][] = $cell->getCalculatedValue();
-			}
-		}
-		
-		$this->create_array_2_csv_local_file($csvArray);
-	}
+    public function convert_excel_to_csv($extention, $filename)
+    {
+        if ($extention === 'xls') $objReader = new PHPExcel_Reader_Excel5();
+        else if ($extention === 'xlsx') $objReader = new PHPExcel_Reader_Excel2007();
 
-    public function parse_csv_column($filename = null){
+        $objReader->setReadDataOnly(true);
+        $objPHPExcel = $objReader->load(dirname(__FILE__) . "/uploads/$filename");
+        $rowIterator = $objPHPExcel->getActiveSheet()->getRowIterator();
+
+        $csvArray = array();
+        foreach ($rowIterator as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            $rowIndex = $row->getRowIndex() - 1;
+            $csvArray[$rowIndex] = array();
+
+            foreach ($cellIterator as $cell) {
+                $csvArray[$rowIndex][] = $cell->getCalculatedValue();
+            }
+        }
+
+        $this->create_array_2_csv_local_file($csvArray);
+    }
+
+    public function parse_csv_column($filename = null)
+    {
         if ($filename == null) {
             $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
         } else {
@@ -135,7 +139,8 @@ class CsvConversion
         return $return;
     }
 
-    public function get_report(){
+    public function get_report()
+    {
         $fp = fopen(dirname(__FILE__) . '/uploads/report.csv', 'r') or die("can't open file");
         $return = array();
 
@@ -154,7 +159,8 @@ class CsvConversion
         return $return;
     }
 
-    public function getDataOfRows($rows){
+    public function getDataOfRows($rows)
+    {
         $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
         $return = array();
 
@@ -175,12 +181,16 @@ class CsvConversion
         return $return;
     }
 
-    public function parse_csv_to_array($keys, $start = 1, $max = MAX_RECORD_TO_INSERT_VIA_insertRecords) {
+    public function parse_csv_to_array($keys, $start = 1, $max = MAX_RECORD_TO_INSERT_VIA_insertRecords, $mendatoryArray)
+    {
         $fp = fopen(dirname(__FILE__) . '/uploads/convertedFile.csv', 'r') or die("can't open file");
-        $return = array();
+        $return = array(
+            'data' => array(),
+            'next_start' => 0
+        );
         $keys_index = array();
         $count = 0;
-        $recordCount = 1;
+        $recordCount = $start;
 
         while ($csv_line = fgetcsv($fp)) {
             if ($count == 0) {
@@ -190,17 +200,35 @@ class CsvConversion
             }
             if ($count >= $start) {
                 $ret = array();
+                $flag = 0;
                 foreach ($keys as $key => $csvColumn) {
+                    if ($csvColumn == '') {
+                        continue;
+                    }
                     $temp_string = $key;
-                    $ret[str_replace('_', ' ', $temp_string)] = trim($csv_line[$keys_index[$csvColumn]]);
+                    $row_value = trim($csv_line[$keys_index[$csvColumn]]);
+                    if (in_array($temp_string, $mendatoryArray) && $row_value == '') {
+                        $flag = 1;
+                        break;
+                    } else if ($row_value == '') {
+                        continue;
+                    }
+                    $ret[str_replace('_', ' ', $temp_string)] = $row_value;
                 }
-                $return[$recordCount] = $ret;
-                if ($recordCount++ >= $max) break;
+                if (!$flag) {
+                    $return['data'][$count] = $ret;
+                    $recordCount++;
+                }
+                if ($recordCount >= ($max + $start)) {
+                    break;
+                }
             }
             $count++;
         }
 
         fclose($fp);
+
+        $return['next_start'] = $count + 1;
 
         return $return;
     }
